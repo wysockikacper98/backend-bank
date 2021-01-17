@@ -21,8 +21,8 @@ public class AccountController {
     }
 
     @PostMapping("/save")
-    public void save(@RequestBody List<DataFromServer> data, @RequestParam Long id) throws AccountNotFoundException {
-        accountService.placePayment(data, id);
+    public void save(@RequestBody List<DataFromServer> data) throws AccountNotFoundException {
+        accountService.placePayment(data);
     }
 
 }

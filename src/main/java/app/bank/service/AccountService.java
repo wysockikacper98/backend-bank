@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -22,11 +21,12 @@ public class AccountService {
     }
 
     @Transactional
-    public void placePayment(List<DataFromServer> data, Long id) throws AccountNotFoundException {
+    public void placePayment(List<DataFromServer> data){
 
-        Account account = accountRepository.findById(id).orElseThrow(AccountNotFoundException::new);
+//        Account account = accountRepository.findById(id).orElseThrow(AccountNotFoundException::new);
+        Account account = new Account();
 
-        List<Payments> payments = new ArrayList<>();
+//        List<Payments> payments = new ArrayList<>();
 
         for (DataFromServer temp : data) {
 
@@ -39,14 +39,18 @@ public class AccountService {
             pay.setTitle(temp.getTitle());
             pay.setAmount(temp.getAmount());
 
-            payments.add(pay);
+            //pobranie konta bankowego po
+            account = accountRepository.findByAccountNumber(pay.getCreditedAccountNumber());
+
+            if(account != null) {
+                account.add(pay);
+                accountRepository.save(account);
+            }
+//            payments.add(pay);
 
         }
-        if (!payments.isEmpty()) {
-            payments.forEach(temp -> account.add(temp));
-        }
 
-        accountRepository.save(account);
+//        accountRepository.save(account);
 
     }
 
