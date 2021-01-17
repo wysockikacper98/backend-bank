@@ -6,9 +6,7 @@ import app.bank.entity.Account;
 import app.bank.entity.Payments;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.AccountNotFoundException;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,7 +22,7 @@ public class AccountService {
     public void placePayment(List<DataFromServer> data){
 
 //        Account account = accountRepository.findById(id).orElseThrow(AccountNotFoundException::new);
-        Account account = new Account();
+        Account account;
 
 //        List<Payments> payments = new ArrayList<>();
 

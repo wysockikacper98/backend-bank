@@ -32,7 +32,7 @@ public class Address {
     private String zipCode;
 
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Client client;
 

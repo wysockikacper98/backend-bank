@@ -36,7 +36,7 @@ public class Payments {
     @Column(name = "amount")
     private BigDecimal amount;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_account")
     private Account account;
 }

@@ -51,11 +51,11 @@ public class Client {
     @JoinColumn(name = "id_address_correspondence", referencedColumnName = "id")
     private Address addressCorrespondence;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Login login;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Account account;
 
