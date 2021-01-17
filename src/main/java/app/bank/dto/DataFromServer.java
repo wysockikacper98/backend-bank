@@ -2,6 +2,8 @@ package app.bank.dto;
 
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -19,5 +21,5 @@ public class DataFromServer {
     private BigDecimal amount;
     private Long id_payment;
     private int status;
-    private Date data;
+    private String data;
 }
