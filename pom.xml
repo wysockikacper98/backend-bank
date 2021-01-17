@@ -15,7 +15,7 @@
     <description>Backend Bank, Projket rok 3 semestr 1</description>
 
     <properties>
-        <java.version>15</java.version>
+        <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
@@ -49,14 +49,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        usunąć poniższy kod jesli coś nie działało-->
-        <dependency>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.8.1</version>
-            <type>maven-plugin</type>
-        </dependency>
-<!--        do tego miejsca usunąć   -->
 
     </dependencies>
 
