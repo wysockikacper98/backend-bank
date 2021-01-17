@@ -34,7 +34,7 @@ public class ClientService {
 
         client.setAddress(data.getAddress());
         client.setAddressCorrespondence(data.getAddressCorrespondence());
-        
+
 
         Account account = data.getAccount();
         account.setClient(client);
