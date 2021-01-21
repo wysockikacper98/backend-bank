@@ -4,6 +4,7 @@ import app.bank.dao.AccountRepository;
 import app.bank.dao.ClientRepository;
 import app.bank.dao.LoginRepository;
 import app.bank.dto.LoginData;
+import app.bank.dto.PostLoginData;
 import app.bank.dto.RegistryData;
 import app.bank.entity.Account;
 import app.bank.entity.Client;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.Random;
 
 
@@ -87,15 +89,39 @@ public class ClientService {
         return accountNumber.toString();
     }
 
-    public boolean login(LoginData data) {
+    @Transactional
+    public PostLoginData login(LoginData data) {
+        PostLoginData sendingData = new PostLoginData();
+
 
         Login login = loginRepository.findByLoginAndPassword(data.getLogin(), data.getPassword());
 
-        if(login == null){
-            return false;
-        }else {
-            return true;
+        if (login != null) {
+            if (login.getPassword().equals(data.getPassword())) {
+                //Pomyślnie zalogowano
+                //Client informacje
+                Client client = new Client();
+                client.setId(login.getClient().getId());
+                client.setFirstName(login.getClient().getFirstName());
+                client.setLastName(login.getClient().getLastName());
+                client.setCitizenship(login.getClient().getCitizenship());
+                client.setPesel(login.getClient().getPesel());
+                client.setDateOfBirth(login.getClient().getDateOfBirth());
+                client.setIdentityCardNumber(login.getClient().getIdentityCardNumber());
+                client.setTelephone(login.getClient().getTelephone());
+                client.setEmail(login.getClient().getEmail());
+                sendingData.setClient(client);
+
+                //Account
+                Account account = new Account();
+                account.setId(login.getClient().getAccount().getId());
+                account.setAccountNumber(login.getClient().getAccount().getAccountNumber());
+                account.setAccountBalance(login.getClient().getAccount().getAccountBalance());
+                sendingData.setAccount(account);
+
+            }
         }
+        return sendingData;
 
     }
 }

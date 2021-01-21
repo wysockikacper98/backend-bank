@@ -3,6 +3,7 @@ package app.bank.controller;
 
 import app.bank.dto.DataFromServer;
 import app.bank.dto.LoginData;
+import app.bank.dto.PostLoginData;
 import app.bank.dto.RegistryData;
 import app.bank.service.AccountService;
 import app.bank.service.ClientService;
@@ -34,7 +35,7 @@ public class AccountController {
     }
 
     @PostMapping("/login")
-    public boolean login(@RequestBody LoginData data) {
+    public PostLoginData login(@RequestBody LoginData data) {
         return clientService.login(data);
     }
 
