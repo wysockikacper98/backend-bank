@@ -10,6 +10,10 @@ import app.bank.entity.Login;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 
 @Service
@@ -36,7 +40,10 @@ public class ClientService {
         client.setAddressCorrespondence(data.getAddressCorrespondence());
 
 
-        Account account = data.getAccount();
+        Account account = new Account();
+        account.setAccountNumber(createNewAccountNumber());
+        account.setAccountBalance(BigDecimal.valueOf(0.00));
+
         account.setClient(client);
         accountRepository.save(account);
 
@@ -46,5 +53,38 @@ public class ClientService {
 
         clientRepository.save(client);
 
+    }
+
+    //TODO: zmienić na prywatne po testach
+    public String createNewAccountNumber() {
+        Random random = new Random();
+        //SK pierwsze 2 liczby
+        StringBuilder sk = new StringBuilder();
+        int temp = random.nextInt(100);
+        if (temp < 10) {
+            sk.append("0").append(temp);
+        } else {
+            sk.append(temp);
+        }
+
+        //Numer banku
+        String bankNumber = "1060 0076";
+
+        //Zlempianie Account Nubmer
+        StringBuilder accountNumber = new StringBuilder(sk + " " + bankNumber);
+        for (int i = 0; i < 4; i++) {
+            temp = random.nextInt(10000);
+            if (temp < 10) {
+                accountNumber.append(" 000").append(temp);
+            } else if (temp < 100) {
+                accountNumber.append(" 00").append(temp);
+            } else if (temp < 1000) {
+                accountNumber.append(" 0").append(temp);
+            } else {
+                accountNumber.append(" ").append(temp);
+            }
+        }
+
+        return accountNumber.toString();
     }
 }

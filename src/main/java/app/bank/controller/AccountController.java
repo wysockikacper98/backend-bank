@@ -3,13 +3,10 @@ package app.bank.controller;
 
 import app.bank.dto.DataFromServer;
 import app.bank.dto.RegistryData;
-import app.bank.entity.Payments;
 import app.bank.service.AccountService;
 import app.bank.service.ClientService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
 
 @RestController

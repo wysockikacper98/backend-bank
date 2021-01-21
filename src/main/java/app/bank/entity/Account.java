@@ -23,7 +23,7 @@ public class Account {
     @Column(name = "account_number")
     private String accountNumber;
 
-    @Column(name = "account_balance")
+    @Column(name = "account_balance",columnDefinition = "BigDecimal(19,2) default '0.00'")
     private BigDecimal accountBalance;
 
     @OneToOne(cascade = CascadeType.ALL)

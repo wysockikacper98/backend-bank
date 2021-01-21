@@ -12,7 +12,7 @@ public class RegistryData {
     private Address address;
     private Address addressCorrespondence;
     private Client client;
-    private Account account;
+//    private Account account;
     private Login login;
 
 }
