@@ -6,4 +6,5 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @CrossOrigin(origins = "*")
 public interface LoginRepository extends JpaRepository<Login, Long> {
+    Login findByLoginAndPassword(String login, String password);
 }

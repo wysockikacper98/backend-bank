@@ -3,6 +3,7 @@ package app.bank.service;
 import app.bank.dao.AccountRepository;
 import app.bank.dao.ClientRepository;
 import app.bank.dao.LoginRepository;
+import app.bank.dto.LoginData;
 import app.bank.dto.RegistryData;
 import app.bank.entity.Account;
 import app.bank.entity.Client;
@@ -11,8 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 
@@ -86,5 +85,17 @@ public class ClientService {
         }
 
         return accountNumber.toString();
+    }
+
+    public boolean login(LoginData data) {
+
+        Login login = loginRepository.findByLoginAndPassword(data.getLogin(), data.getPassword());
+
+        if(login == null){
+            return false;
+        }else {
+            return true;
+        }
+
     }
 }

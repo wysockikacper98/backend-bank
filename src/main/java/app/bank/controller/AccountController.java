@@ -2,6 +2,7 @@ package app.bank.controller;
 
 
 import app.bank.dto.DataFromServer;
+import app.bank.dto.LoginData;
 import app.bank.dto.RegistryData;
 import app.bank.service.AccountService;
 import app.bank.service.ClientService;
@@ -30,6 +31,11 @@ public class AccountController {
     @PostMapping("/registry")
     public void registry(@RequestBody RegistryData data) {
         clientService.placeRegistry(data);
+    }
+
+    @PostMapping("/login")
+    public boolean login(@RequestBody LoginData data) {
+        return clientService.login(data);
     }
 
 }
