@@ -6,6 +6,7 @@ import app.bank.dto.LoginData;
 import app.bank.dto.PostLoginData;
 import app.bank.dto.RegistryData;
 import app.bank.entity.Login;
+import app.bank.entity.Payments;
 import app.bank.exeption.LoginNotFoundException;
 import app.bank.service.AccountService;
 import app.bank.service.ClientService;
@@ -18,19 +19,19 @@ import java.util.List;
 @RequestMapping("/bank")
 public class AccountController {
 
-    private AccountService accountService;
-    private ClientService clientService;
+    private final AccountService accountService;
+    private final ClientService clientService;
 
     public AccountController(AccountService accountService, ClientService clientService) {
         this.accountService = accountService;
         this.clientService = clientService;
     }
-
+    //dodawanie listy przelewów
     @PostMapping("/save")
     public void save(@RequestBody List<DataFromServer> data) {
         accountService.placePayment(data);
     }
-
+    //rejestrowanie użytkownika
     @PostMapping("/registry")
     public void registry(@RequestBody RegistryData data) {
         clientService.placeRegistry(data);
@@ -47,4 +48,9 @@ public class AccountController {
         return temp;
     }
 
+    @PostMapping("/new-payment")
+    @ResponseBody
+    public void payment(@RequestBody Payments payment){
+        accountService.newPayment(payment);
+    }
 }
