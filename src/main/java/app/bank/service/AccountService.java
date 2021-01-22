@@ -12,19 +12,17 @@ import java.util.List;
 @Service
 public class AccountService {
 
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
     public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
     @Transactional
-    public void placePayment(List<DataFromServer> data){
+    public void placePayment(List<DataFromServer> data) {
 
-//        Account account = accountRepository.findById(id).orElseThrow(AccountNotFoundException::new);
         Account account;
 
-//        List<Payments> payments = new ArrayList<>();
 
         for (DataFromServer temp : data) {
 
@@ -40,15 +38,14 @@ public class AccountService {
             //pobranie konta bankowego po
             account = accountRepository.findByAccountNumber(pay.getCreditedAccountNumber());
 
-            if(account != null) {
+            if (account != null) {
                 account.add(pay);
+                account.setAccountBalance(account.getAccountBalance().add(pay.getAmount()));
                 accountRepository.save(account);
             }
-//            payments.add(pay);
 
         }
 
-//        accountRepository.save(account);
 
     }
 

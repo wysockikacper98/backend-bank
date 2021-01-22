@@ -9,20 +9,24 @@ import app.bank.dto.RegistryData;
 import app.bank.entity.Account;
 import app.bank.entity.Client;
 import app.bank.entity.Login;
+import app.bank.entity.Payments;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 
 @Service
 public class ClientService {
 
-    private ClientRepository clientRepository;
-    private LoginRepository loginRepository;
-    private AccountRepository accountRepository;
+    private final ClientRepository clientRepository;
+    private final LoginRepository loginRepository;
+    private final AccountRepository accountRepository;
 
     public ClientService(ClientRepository clientRepository, LoginRepository loginRepository, AccountRepository accountRepository) {
         this.clientRepository = clientRepository;
@@ -119,9 +123,26 @@ public class ClientService {
                 account.setAccountBalance(login.getClient().getAccount().getAccountBalance());
                 sendingData.setAccount(account);
 
+                //Payments
+                Set<Payments> payments = new HashSet<>();
+
+                for (Payments temp : login.getClient().getAccount().getPayments()) {
+                    Payments pay = new Payments();
+
+                    pay.setId(temp.getId());
+                    pay.setDebitedAccountNumber(temp.getDebitedAccountNumber());
+                    pay.setDebitedNameAndAddress(temp.getDebitedNameAndAddress());
+                    pay.setCreditedAccountNumber(temp.getCreditedAccountNumber());
+                    pay.setCreditedNameAndAddress(temp.getCreditedNameAndAddress());
+                    pay.setTitle(temp.getTitle());
+                    pay.setAmount(temp.getAmount());
+                    payments.add(pay);
+                }
+
+                sendingData.setPayments(payments);
+
             }
         }
         return sendingData;
-
     }
 }

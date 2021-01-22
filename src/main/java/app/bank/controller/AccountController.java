@@ -5,6 +5,8 @@ import app.bank.dto.DataFromServer;
 import app.bank.dto.LoginData;
 import app.bank.dto.PostLoginData;
 import app.bank.dto.RegistryData;
+import app.bank.entity.Login;
+import app.bank.exeption.LoginNotFoundException;
 import app.bank.service.AccountService;
 import app.bank.service.ClientService;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +37,14 @@ public class AccountController {
     }
 
     @PostMapping("/login")
+    @ResponseBody
     public PostLoginData login(@RequestBody LoginData data) {
-        return clientService.login(data);
+        PostLoginData temp = clientService.login(data);
+        if (temp.getAccount() == null || temp.getClient() == null) {
+            throw new LoginNotFoundException("Błędne hasło albo login");
+        }
+
+        return temp;
     }
 
 }
