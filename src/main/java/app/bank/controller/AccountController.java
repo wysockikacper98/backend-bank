@@ -5,13 +5,13 @@ import app.bank.dto.DataFromServer;
 import app.bank.dto.LoginData;
 import app.bank.dto.PostLoginData;
 import app.bank.dto.RegistryData;
-import app.bank.entity.Login;
 import app.bank.entity.Payments;
 import app.bank.exeption.LoginNotFoundException;
 import app.bank.service.AccountService;
 import app.bank.service.ClientService;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -50,7 +50,7 @@ public class AccountController {
 
     @PostMapping("/new-payment")
     @ResponseBody
-    public void payment(@RequestBody Payments payment){
+    public void payment(@RequestBody Payments payment) throws IOException {
         accountService.newPayment(payment);
     }
 }

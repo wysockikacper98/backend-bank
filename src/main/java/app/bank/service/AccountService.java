@@ -8,6 +8,15 @@ import app.bank.exeption.AccountNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLOutput;
 import java.util.List;
 
@@ -48,7 +57,15 @@ public class AccountService {
         }
     }
 
-    public void newPayment(Payments payment) {
+
+    @Transactional
+    public void newPayment(Payments payment) throws IOException {
+
+        if (payment.getCreditedAccountNumber().equals(payment.getDebitedAccountNumber())) {
+            System.out.println("Takie same numery kont");
+            throw new AccountNotFoundException("Credited Account is the same as Debited Account");
+        }
+
         Account creditedAccount;
         Account debitedAccount;
 
@@ -75,7 +92,49 @@ public class AccountService {
 
             //przelew zewnętrzy wysyłamy do jednostki rozliczeniowej
             if (creditedAccount == null) {
-                //TODO: wysyłanie do jednostki ciała nowego przelewu
+                //wysyłanie do jednostki ciała nowego przelewu
+                // adresu gdzie wysyłać dane
+                URL url = new URL("https://jednroz.herokuapp.com/send");
+                //open connection
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                //set the Request Method
+                con.setRequestMethod("POST");
+
+                //Set the Request Content-type Header Parameter
+                con.setRequestProperty("Content-Type", "application/json; utf-8");
+                //Set Response Format Type
+                con.setRequestProperty("Accept", "application/json");
+                //Ensure the Connection Will Be Used to Send Content
+                con.setDoOutput(true);
+
+                //Create the Request Body
+                String jsonInputString =
+                        "{\n" +
+                                "    \"PaymentSum\": "+payment.getAmount().add(BigDecimal.valueOf(10.00))+",\n" +
+                                "    \"DebitedAccountNumber\": \""+payment.getDebitedAccountNumber()+"\",\n" +
+                                "    \"DebitedNameAndAddress\": \""+payment.getDebitedNameAndAddress()+"\",\n" +
+                                "    \"CreditedAccountNumber\": \""+payment.getCreditedAccountNumber()+"\",\n" +
+                                "    \"CreditedNameAndAddress\": \""+payment.getCreditedNameAndAddress()+"\",\n" +
+                                "    \"title\": \""+payment.getTitle()+"\",\n" +
+                                "    \"Amount\": "+payment.getAmount()+",\n" +
+                                "}";
+
+                try (OutputStream os = con.getOutputStream()) {
+                    byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
+                    os.write(input, 0, input.length);
+                }
+
+                //Read the Response form input Stream *OPTIONAL*
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
+
+                    StringBuilder response = new StringBuilder();
+                    String responseLine;
+                    while ((responseLine = br.readLine()) != null) {
+                        response.append(responseLine.trim());
+                    }
+                    System.out.println(response.toString());
+                }
+
             } else {
                 //przelew wewnętrzny wykonujemy przelew od razu
                 //aktualizajca stanu konta bankowego
