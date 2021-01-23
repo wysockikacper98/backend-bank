@@ -60,8 +60,7 @@ public class ClientService {
 
     }
 
-    //TODO: zmienić na prywatne po testach
-    public String createNewAccountNumber() {
+    private String createNewAccountNumber() {
         Random random = new Random();
         //SK pierwsze 2 liczby
         StringBuilder sk = new StringBuilder();

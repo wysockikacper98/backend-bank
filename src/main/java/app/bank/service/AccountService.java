@@ -35,6 +35,7 @@ public class AccountService {
             pay.setCreditedNameAndAddress(temp.getCreditednameandaddress());
             pay.setTitle(temp.getTitle());
             pay.setAmount(temp.getAmount());
+            pay.setStatus(temp.getStatus());
 
             //pobranie konta bankowego po
             account = accountRepository.findByAccountNumber(pay.getCreditedAccountNumber());
@@ -64,21 +65,23 @@ public class AccountService {
             //Obciążanie konta osoby wysyłającej przelew
             debitedAccount.add(payment);
 
-            if(debitedAccount.getAccountBalance().compareTo(payment.getAmount()) < 0){
+            //Sprawdzanie środków na koncie
+            if (debitedAccount.getAccountBalance().compareTo(payment.getAmount()) < 0) {
                 throw new AccountNotFoundException("Niewystarczające środki na koncie");
             }
-            System.out.println("Wystarczające środki na koncie");
 
+            //update ilosci pieniędzy na koncie
             debitedAccount.setAccountBalance(debitedAccount.getAccountBalance().subtract(payment.getAmount()));
 
             //przelew zewnętrzy wysyłamy do jednostki rozliczeniowej
             if (creditedAccount == null) {
                 //TODO: wysyłanie do jednostki ciała nowego przelewu
-            }else{
+            } else {
                 //przelew wewnętrzny wykonujemy przelew od razu
+                //aktualizajca stanu konta bankowego
                 creditedAccount.setAccountBalance(creditedAccount.getAccountBalance().add(payment.getAmount()));
-
-
+                //zapisanie nowego przelewu
+                creditedAccount.add(copyPayment(payment));
                 accountRepository.save(creditedAccount);
             }
 
@@ -87,8 +90,17 @@ public class AccountService {
         }
     }
 
-
-
+    private Payments copyPayment(Payments payment) {
+        Payments tempPayment = new Payments();
+        tempPayment.setDebitedAccountNumber(payment.getDebitedAccountNumber());
+        tempPayment.setDebitedNameAndAddress(payment.getDebitedNameAndAddress());
+        tempPayment.setCreditedAccountNumber(payment.getCreditedAccountNumber());
+        tempPayment.setCreditedNameAndAddress(payment.getCreditedNameAndAddress());
+        tempPayment.setTitle(payment.getTitle());
+        tempPayment.setAmount(payment.getAmount());
+        tempPayment.setStatus(payment.getStatus());
+        return tempPayment;
+    }
 
 
 }
