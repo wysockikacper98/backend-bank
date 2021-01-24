@@ -95,6 +95,7 @@ public class AccountService {
                 //wysyłanie do jednostki ciała nowego przelewu
                 // adresu gdzie wysyłać dane
                 URL url = new URL("https://jednroz.herokuapp.com/send");
+//                URL url = new URL("http://localhost:8080/bank/addresses");
                 //open connection
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 //set the Request Method
@@ -109,15 +110,25 @@ public class AccountService {
 
                 //Create the Request Body
                 String jsonInputString =
+
+//                        "{\n" +
+//                        "    \"city\": \"TestCity\",\n" +
+//                        "    \"country\": \"TestCountry\",\n" +
+//                        "    \"state\": \"TestState\",\n" +
+//                        "    \"street\": \"TestStreet\",\n" +
+//                        "    \"zipCode\": \"Test-123\"\n" +
+//                        "}";
+
+
                         "{\n" +
-                                "    \"PaymentSum\": "+payment.getAmount().add(BigDecimal.valueOf(10.00))+",\n" +
-                                "    \"DebitedAccountNumber\": \""+payment.getDebitedAccountNumber()+"\",\n" +
-                                "    \"DebitedNameAndAddress\": \""+payment.getDebitedNameAndAddress()+"\",\n" +
-                                "    \"CreditedAccountNumber\": \""+payment.getCreditedAccountNumber()+"\",\n" +
-                                "    \"CreditedNameAndAddress\": \""+payment.getCreditedNameAndAddress()+"\",\n" +
-                                "    \"title\": \""+payment.getTitle()+"\",\n" +
-                                "    \"Amount\": "+payment.getAmount()+",\n" +
-                                "}";
+                        "    \"PaymentSum\": 66.00,\n" +
+                        "    \"DebitedAccountNumber\": \"61 1060 0076 0452 1584 3569 3167\",\n" +
+                        "    \"DebitedNameAndAddress\": \"Michal Michalowski\",\n" +
+                        "    \"CreditedAccountNumber\": \"89 1060 0076 7590 9223 3274 6192\",\n" +
+                        "    \"CreditedNameAndAddress\": \"Marcin Marcinowski\",\n" +
+                        "    \"Amount\": 65.23,\n" +
+                        "    \"Title\": \"Czwarty Przelew Wewnętrzny\"\n" +
+                        "}";
 
                 try (OutputStream os = con.getOutputStream()) {
                     byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 public class DataFromServer {
 
     private Long bankno;
-    private int paymentsum;
+    private BigDecimal paymentsum;
     private String debitedaccountnumber;
     private String debitednameandaddress;
     private String creditedaccountnumber;

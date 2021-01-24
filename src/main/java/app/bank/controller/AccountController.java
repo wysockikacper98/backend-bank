@@ -1,10 +1,7 @@
 package app.bank.controller;
 
 
-import app.bank.dto.DataFromServer;
-import app.bank.dto.LoginData;
-import app.bank.dto.PostLoginData;
-import app.bank.dto.RegistryData;
+import app.bank.dto.*;
 import app.bank.entity.Payments;
 import app.bank.exeption.LoginNotFoundException;
 import app.bank.service.AccountService;
