@@ -10,6 +10,7 @@ import app.bank.entity.Account;
 import app.bank.entity.Client;
 import app.bank.entity.Login;
 import app.bank.entity.Payments;
+import app.bank.exeption.LoginNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,10 @@ public class ClientService {
 
     @Transactional
     public void placeRegistry(RegistryData data) {
+
+        if(loginRepository.findByLogin(data.getLogin().getLogin()) != null){
+            throw new LoginNotFoundException("Login istnieje w bazie danych");
+        }
 
         //pobranie clienta
         Client client = data.getClient();
