@@ -5,12 +5,16 @@ import app.bank.dto.DataFromServer;
 import app.bank.entity.Account;
 import app.bank.entity.Payments;
 import app.bank.exeption.AccountNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -29,15 +33,7 @@ public class AccountService {
 
         for (DataFromServer temp : data) {
 
-            Payments pay = new Payments();
-
-            pay.setDebitedAccountNumber(temp.getDebitedaccountnumber());
-            pay.setDebitedNameAndAddress(temp.getDebitednameandaddress());
-            pay.setCreditedAccountNumber(temp.getCreditedaccountnumber());
-            pay.setCreditedNameAndAddress(temp.getCreditednameandaddress());
-            pay.setTitle(temp.getTitle());
-            pay.setAmount(temp.getAmount());
-            pay.setStatus(temp.getStatus());
+            Payments pay = setPay(temp);
 
             //pobranie konta bankowego po
             account = accountRepository.findByAccountNumber(pay.getCreditedAccountNumber());
@@ -59,6 +55,14 @@ public class AccountService {
             throw new AccountNotFoundException("Credited Account is the same as Debited Account");
         }
 
+        //pobranie typu przelewu 1 - darmowy; 2 -> +5PLN
+        double costPayment = 0;
+        if (payment.getStatus() == 2) {
+            costPayment = 5;
+            //oznaczenie przelewu jako wysłany
+            payment.setStatus(1);
+        }
+
         Account creditedAccount;
         Account debitedAccount;
 
@@ -72,16 +76,15 @@ public class AccountService {
         } else {
             //Konto osoby wysyłającej Istnieje
             System.out.println("Konto istnieje");
-            //Obciążanie konta osoby wysyłającej przelew
-            debitedAccount.add(payment);
 
             //Sprawdzanie środków na koncie
-            if (debitedAccount.getAccountBalance().compareTo(payment.getAmount()) < 0) {
+            if (debitedAccount.getAccountBalance().compareTo(payment.getAmount().add(BigDecimal.valueOf(costPayment))) < 0) {
                 throw new AccountNotFoundException("Niewystarczające środki na koncie");
             }
 
+
             //update ilosci pieniędzy na koncie
-            debitedAccount.setAccountBalance(debitedAccount.getAccountBalance().subtract(payment.getAmount()));
+            debitedAccount.setAccountBalance(debitedAccount.getAccountBalance().subtract(payment.getAmount().add(BigDecimal.valueOf(costPayment))));
 
             //przelew zewnętrzy wysyłamy do jednostki rozliczeniowej
             if (creditedAccount == null) {
@@ -96,7 +99,9 @@ public class AccountService {
                 creditedAccount.add(copyPayment(payment));
                 accountRepository.save(creditedAccount);
             }
-
+            //Obciążanie konta osoby wysyłającej przelew
+            payment.setAmount(payment.getAmount().multiply(BigDecimal.valueOf(-1)));
+            debitedAccount.add(payment);
             accountRepository.save(debitedAccount);
 
         }
@@ -110,7 +115,8 @@ public class AccountService {
         tempPayment.setCreditedNameAndAddress(payment.getCreditedNameAndAddress());
         tempPayment.setTitle(payment.getTitle());
         tempPayment.setAmount(payment.getAmount());
-        tempPayment.setStatus(payment.getStatus());
+//        tempPayment.setStatus(payment.getStatus());
+        tempPayment.setStatus(2);
         return tempPayment;
     }
 
@@ -131,15 +137,7 @@ public class AccountService {
         assert data != null;
         for (DataFromServer temp : data) {
 
-            Payments pay = new Payments();
-
-            pay.setDebitedAccountNumber(temp.getDebitedaccountnumber());
-            pay.setDebitedNameAndAddress(temp.getDebitednameandaddress());
-            pay.setCreditedAccountNumber(temp.getCreditedaccountnumber());
-            pay.setCreditedNameAndAddress(temp.getCreditednameandaddress());
-            pay.setTitle(temp.getTitle());
-            pay.setAmount(temp.getAmount());
-            pay.setStatus(temp.getStatus());
+            Payments pay = setPay(temp);
             System.out.println(pay);
 
             //pobranie konta bankowego po
@@ -152,4 +150,59 @@ public class AccountService {
             }
         }
     }
+
+    public void getNewPayments() {
+        RestTemplate restTemplate = new RestTemplate();
+
+        String fooResourceURL = "https://jednroz.herokuapp.com/get?id=10600076";
+
+
+        ResponseEntity<DataFromServer[]> response = restTemplate.getForEntity(fooResourceURL, DataFromServer[].class);
+        DataFromServer[] data = response.getBody();
+
+        List<Payments> paymentsList = new ArrayList<>();
+        Arrays.stream(data).forEach(temp -> paymentsList.add(setPay(temp)));
+
+        //dodawanie listy przelewów do bazy
+        this.addNewListPayments(paymentsList);
+        
+        if (response.getStatusCode() == HttpStatus.OK) {
+            System.out.println("OK");
+        }
+    }
+
+    private Payments setPay(DataFromServer temp) {
+        Payments pay = new Payments();
+        pay.setDebitedAccountNumber(temp.getDebitedaccountnumber());
+        pay.setDebitedNameAndAddress(temp.getDebitednameandaddress());
+        pay.setCreditedAccountNumber(temp.getCreditedaccountnumber());
+        pay.setCreditedNameAndAddress(temp.getCreditednameandaddress());
+        pay.setTitle(temp.getTitle());
+        pay.setAmount(temp.getAmount());
+        pay.setStatus(temp.getStatus());
+        return pay;
+    }
+
+    @Transactional
+    public void addNewListPayments(List<Payments> data) {
+
+        final Account[] account = new Account[1];
+
+        data.forEach(pay -> {
+            System.out.println(pay.toString());
+            //pobranie konta bankowego po
+            account[0] = accountRepository.findByAccountNumber(pay.getCreditedAccountNumber());
+
+            if (account[0] != null) {
+                account[0].add(pay);
+                account[0].setAccountBalance(account[0].getAccountBalance().add(pay.getAmount()));
+                accountRepository.save(account[0]);
+            }
+        });
+
+
+    }
+    
+    
+    
 }

@@ -12,6 +12,6 @@ public class PostLoginData {
 
     private Client client;
     private Account account;
-    private Set<Payments> payments;
+//    private Set<Payments> payments;
 
 }

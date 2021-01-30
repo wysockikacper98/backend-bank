@@ -3,9 +3,11 @@ package app.bank.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Table(name = "payments")
@@ -39,7 +41,26 @@ public class Payments {
     @Column(name = "status")
     private int status;
 
+    @Column(name = "date_created")
+    @CreationTimestamp
+    private Date dateCreated;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_account")
     private Account account;
+
+    @Override
+    public String toString() {
+        return "Payments{" +
+                id +
+                ", " + debitedAccountNumber + '\'' +
+                ", " + debitedNameAndAddress + '\'' +
+                ", " + creditedAccountNumber + '\'' +
+                ", " + creditedNameAndAddress + '\'' +
+                ", " + title + '\'' +
+                ", " + amount +
+                ", " + status +
+                ", " + dateCreated +
+                '}';
+    }
 }

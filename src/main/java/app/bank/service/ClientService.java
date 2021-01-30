@@ -123,22 +123,22 @@ public class ClientService {
                 sendingData.setAccount(account);
 
                 //Payments
-                Set<Payments> payments = new HashSet<>();
-
-                for (Payments temp : login.getClient().getAccount().getPayments()) {
-                    Payments pay = new Payments();
-
-                    pay.setId(temp.getId());
-                    pay.setDebitedAccountNumber(temp.getDebitedAccountNumber());
-                    pay.setDebitedNameAndAddress(temp.getDebitedNameAndAddress());
-                    pay.setCreditedAccountNumber(temp.getCreditedAccountNumber());
-                    pay.setCreditedNameAndAddress(temp.getCreditedNameAndAddress());
-                    pay.setTitle(temp.getTitle());
-                    pay.setAmount(temp.getAmount());
-                    payments.add(pay);
-                }
-
-                sendingData.setPayments(payments);
+//                Set<Payments> payments = new HashSet<>();
+//
+//                for (Payments temp : login.getClient().getAccount().getPayments()) {
+//                    Payments pay = new Payments();
+//
+//                    pay.setId(temp.getId());
+//                    pay.setDebitedAccountNumber(temp.getDebitedAccountNumber());
+//                    pay.setDebitedNameAndAddress(temp.getDebitedNameAndAddress());
+//                    pay.setCreditedAccountNumber(temp.getCreditedAccountNumber());
+//                    pay.setCreditedNameAndAddress(temp.getCreditedNameAndAddress());
+//                    pay.setTitle(temp.getTitle());
+//                    pay.setAmount(temp.getAmount());
+//                    payments.add(pay);
+//                }
+//
+//                sendingData.setPayments(payments);
 
             }
         }

@@ -72,4 +72,8 @@ public class AccountController {
         return "POST Siema";
     }
 
+    @GetMapping("/get-new-payments")
+    public void getNewPayments(){
+        accountService.getNewPayments();
+    }
 }
