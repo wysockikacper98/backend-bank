@@ -56,7 +56,7 @@ public class AccountController {
     }
 
     @GetMapping("/getFromServer")
-    public void getFromServer(){
+    public void getFromServer() {
         accountService.getFromService();
     }
 
@@ -68,12 +68,14 @@ public class AccountController {
 
     @GetMapping("/testPost")
     public String testPost() {
-        testService.postDataTest();
+
+        System.out.println(clientService.createNewAccountNumber());
+
         return "POST Siema";
     }
 
     @GetMapping("/get-new-payments")
-    public void getNewPayments(){
+    public void getNewPayments() {
         accountService.getNewPayments();
     }
 }

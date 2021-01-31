@@ -9,17 +9,12 @@ import app.bank.dto.RegistryData;
 import app.bank.entity.Account;
 import app.bank.entity.Client;
 import app.bank.entity.Login;
-import app.bank.entity.Payments;
 import app.bank.exeption.LoginNotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 
 @Service
@@ -38,7 +33,7 @@ public class ClientService {
     @Transactional
     public void placeRegistry(RegistryData data) {
 
-        if(loginRepository.findByLogin(data.getLogin().getLogin()) != null){
+        if (loginRepository.findByLogin(data.getLogin().getLogin()) != null) {
             throw new LoginNotFoundException("Login istnieje w bazie danych");
         }
 
@@ -65,22 +60,21 @@ public class ClientService {
 
     }
 
-    private String createNewAccountNumber() {
+    public String createNewAccountNumber() {
         Random random = new Random();
         //SK pierwsze 2 liczby
-        StringBuilder sk = new StringBuilder();
-        int temp = random.nextInt(100);
-        if (temp < 10) {
-            sk.append("0").append(temp);
-        } else {
-            sk.append(temp);
-        }
+        int temp;
+//        if (temp < 10) {
+//            sk.append("0").append(temp);
+//        } else {
+//            sk.append(temp);
+//        }
 
         //Numer banku
         String bankNumber = "1060 0076";
 
         //Zlempianie Account Nubmer
-        StringBuilder accountNumber = new StringBuilder(sk + " " + bankNumber);
+        StringBuilder accountNumber = new StringBuilder();
         for (int i = 0; i < 4; i++) {
             temp = random.nextInt(10000);
             if (temp < 10) {
@@ -94,7 +88,32 @@ public class ClientService {
             }
         }
 
-        return accountNumber.toString();
+        StringBuilder sk = generateSK(bankNumber, accountNumber);
+
+
+        return sk.append(" ").append(bankNumber).append(accountNumber).toString();
+    }
+
+    private StringBuilder generateSK(String bankNumber, StringBuilder accountNumber) {
+        String cnumber = "252100";
+
+        bankNumber = bankNumber.replaceAll(" ", "");
+
+        accountNumber = new StringBuilder(accountNumber.toString().replaceAll(" ", ""));
+
+        String c1 = String.valueOf(Integer.parseInt(bankNumber) % 97);
+
+        String c2 = String.valueOf(Integer.parseInt(c1 + accountNumber.substring(0, 8)) % 97);
+
+        c1 = String.valueOf(Long.parseLong(c2 + accountNumber.substring(8)) % 97);
+
+        c2 = String.valueOf(98 - (Long.parseLong(c1+cnumber) % 97));
+
+        if (Integer.parseInt(c2) < 10) {
+            c2 = "0"+c2;
+        }
+
+        return new StringBuilder(c2);
     }
 
     @Transactional

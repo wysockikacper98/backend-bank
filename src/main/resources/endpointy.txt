@@ -1,0 +1,71 @@
+
+
+
+Endpointy : https://backend-bank-heroku.herokuapp.com/bank/
+###     GET     ###
+        -get-new-payments -> pobiera dane z jednosktki i wpisuje do bazy
+        -account/1/payments -> wyśle ci dane dla konta bankowego o id (w tym przypadku id = 1)
+
+###     POST    ###
+        -login -> wysyłasz dane do loginu jak są git to cię loguje jak nie to error
+        -new-payment -> wysyłasz dane do nowego przelewu
+        -registry -> wysyłasz dane do rejestracji jeśli istnieje już taki login to nie utworzy ci konta
+
+
+
+### JSON do POST'ów ###
+-new-payment
+{
+    "debitedAccountNumber": "52 1060 0076 6720 5555 2850 0963",
+    "debitedNameAndAddress": "GabrysiaAddress",
+    "creditedAccountNumber": "86 1060 0000 5054 7813 2285 5085",
+    "creditedNameAndAddress": "RafalAddress",
+    "title": "zewtnętrzny",
+    "amount": 100,
+    "status": 2
+}
+
+
+
+-login
+{
+    "login": "Marcin",
+    "password": "marcin0"
+}
+
+
+
+
+-registry
+{
+    "address": {
+        "city": "Majdan",
+        "country": "Polska",
+        "state": "Podkarpacie",
+        "street": "Sienna 70/4",
+        "zipCode": "02-23"
+    },
+    "addressCorrespondence": {
+        "city": "Majdan",
+        "country": "Polska",
+        "state": "Podkarpacie",
+        "street": "Sienna 70/4",
+        "zipCode": "02-23"
+    },
+    "client": {
+        "firstName": "Gabrysia",
+        "lastName": "Gabrysiowska",
+        "citizenship": "Polska",
+        "pesel": "05252983943",
+        "dateOfBirth": "2005-05-29",
+        "identityCardNumber": "GAB83943",
+        "telephone": "(48)670-21-7637",
+        "email": "gabrysia@gmail.com"
+    },
+    "login": {
+        "login": "gabi",
+        "password": "gabi"
+    }
+}
+
+
