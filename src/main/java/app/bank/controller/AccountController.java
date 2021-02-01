@@ -7,6 +7,7 @@ import app.bank.exeption.LoginNotFoundException;
 import app.bank.service.AccountService;
 import app.bank.service.ClientService;
 import app.bank.service.TestService;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -68,7 +69,6 @@ public class AccountController {
 
     @GetMapping("/testPost")
     public String testPost() {
-
         System.out.println(clientService.createNewAccountNumber());
 
         return "POST Siema";
@@ -78,4 +78,6 @@ public class AccountController {
     public void getNewPayments() {
         accountService.getNewPayments();
     }
+
+
 }

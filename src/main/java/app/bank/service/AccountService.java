@@ -7,6 +7,7 @@ import app.bank.entity.Payments;
 import app.bank.exeption.AccountNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -170,6 +171,15 @@ public class AccountService {
             System.out.println("OK");
         }
     }
+
+
+    @Scheduled(cron = "0 0 9,12,16 * * MON-FRI")
+    public void reportCurrentTime() {
+        System.out.println("Pobieramy dane z jednostki");
+        this.getNewPayments();
+    }
+
+
 
     private Payments setPay(DataFromServer temp) {
         Payments pay = new Payments();
